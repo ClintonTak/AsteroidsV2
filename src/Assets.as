@@ -31,6 +31,9 @@ package{
 		[Embed(source = "assets/WASD.png")]
 		private static const WASD:Class
 		
+		[Embed(source = "assets/ship.png")]
+		private static const Ship:Class
+		
 		public static function getImage(n:String):Bitmap{
 			var imgClass:Class = ButtonNormal; 
 			if (n == "play"){
@@ -49,6 +52,8 @@ package{
 				imgClass = HighScoresButtonHover
 			} else if (n == "wasd"){
 				imgClass = WASD; 
+			} else if (n == "ship"){
+				imgClass = Ship; 
 			}
 			return new imgClass() as Bitmap;
 		}

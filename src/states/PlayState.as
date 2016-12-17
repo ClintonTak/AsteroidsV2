@@ -21,6 +21,8 @@ package states
 	import gameObjects.gfx.GFXBoom;
 	import gameObjects.gfx.GFXOuch;
 	import gameObjects.gfx.GFXScreenShake;
+	import Assets;
+	import flash.display.SimpleButton;
 	
 	
 	/*
@@ -45,6 +47,13 @@ package states
 	public class PlayState extends State{
 		private var _fsm:Game; 
 		private var _lives:Number = 3; 
+		private var _healthShip1:SimpleButton = new SimpleButton(Assets.getImage("ship"), 
+							Assets.getImage("ship"), Assets.getImage("ship"), Assets.getImage("ship"));
+		private var _healthShip2:SimpleButton = new SimpleButton(Assets.getImage("ship"), 
+							Assets.getImage("ship"), Assets.getImage("ship"), Assets.getImage("ship"));
+		private var _healthShip3:SimpleButton = new SimpleButton(Assets.getImage("ship"), 
+							Assets.getImage("ship"), Assets.getImage("ship"), Assets.getImage("ship"));
+							
 		private var _bullets:Vector.<Entity> = new Vector.<Entity>; 
 		private var _asteroids:Vector.<Entity> = new Vector.<Entity>;
 		private var _gfx:Vector.<Entity> = new Vector.<Entity>;
@@ -63,6 +72,7 @@ package states
 			mouseEnabled = false;
 			mouseChildren = false; 
 			spawnAsteroids();
+			healthDisplay();
 		}
 		public function onKeyDown(e:KeyboardEvent):void{
 			if (e.keyCode == Keyboard.R){
@@ -129,6 +139,26 @@ package states
 			}
 			checkCollisions();
 			removeAllDeadEntities(); 
+			//controlHealth();
+		}
+		
+	
+		private function healthDisplay():void{
+			for (var i:int = 0; i < _lives; i++){
+				if (i == 0){
+					addChild(_healthShip1);
+					_healthShip1.x = 20; 
+					_healthShip1.y = 20;
+				} else if (i == 1){
+					addChild(_healthShip2);
+					_healthShip2.x = 60; 
+					_healthShip2.y = 20;
+				} else if (i == 2){
+					addChild(_healthShip3);
+					_healthShip3.x = 100; 
+					_healthShip3.y = 20;
+				}
+			}
 		}
 		
 		private function checkCollisions():void{
@@ -147,9 +177,14 @@ package states
 					a.onCollision(_ship);
 					addEntity(new GFXOuch(_ship.centerX, _ship.centerY)); 
 					_lives--; 
+					if (_lives == 2){
+						removeChild(_healthShip3);
+					}
+					if (_lives == 1){
+						removeChild(_healthShip2); 
+					}
 					if (_lives == 0){
-						_fsm.changeState(Game.GAME_OVER_STATE); 
-						 
+						_fsm.changeState(Game.GAME_OVER_STATE);  
 					}
 					break;
 				}
