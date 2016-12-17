@@ -13,10 +13,11 @@ package gameObjects {
 		private var _friction:Number = 0.97;
 		
 		private var _rearRight:Point = new Point(0, 0); 
-		private var _nose:Point = new Point(Config.SHIP_WIDTH, Config.SHIP_HEIGHT * .5 ); 
-		private var _rearLeft:Point = new Point(0, Config.SHIP_HEIGHT); 
-		private var _engineHole:Point = new Point(Config.SHIP_WIDTH*.125, Config.SHIP_HEIGHT * .5); 
-		private var _nextShot:Number = getTimer() + Config.TIME_BETWEEN_SHOTS; 
+		private var _nose:Point = new Point(Config.getNumber("width", "ship"), Config.getNumber("height", "ship") * .5 ); 
+		private var _rearLeft:Point = new Point(0,  Config.getNumber("height", "ship")); 
+
+		private var _engineHole:Point = new Point(Config.getNumber("width", "ship")*.125, Config.getNumber("height", "ship") * .5); 
+		private var _nextShot:Number = getTimer() + Config.getNumber("time_between_shots", "ship"); 
 		public function Ship(x:Number = 0, y:Number = 0) {
 			super(x, y);
 		}
@@ -93,7 +94,7 @@ package gameObjects {
 		
 		public function draw():void{
 			graphics.clear();
-			graphics.lineStyle(Config.LINE_SIZE, _color); 
+			graphics.lineStyle(Config.getNumber("line_size", "settings"), _color); 
 			graphics.moveTo( _rearRight.x, _rearRight.y);
 			graphics.lineTo( _nose.x, _nose.y); 
 			graphics.lineTo( _rearLeft.x, _rearLeft.y); 
@@ -102,8 +103,8 @@ package gameObjects {
 		}
 		
 		public function drawFlame():void{
-			graphics.lineStyle(Config.LINE_SIZE, _color);
-			var h:Number = Config.SHIP_HEIGHT; 
+			graphics.lineStyle(Config.getNumber("line_size", "settings"), _color);
+			var h:Number = Config.getNumber("height", "ship"); 
 			var l:Number = Utils.randomInt(4, 15); 
 			graphics.moveTo(2, 1); 
 			graphics.lineTo( -l, h * .5); 

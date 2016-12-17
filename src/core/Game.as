@@ -1,13 +1,18 @@
 package core {
 	import flash.display.Sprite;
 	import flash.events.Event; 
-	import states.Play;
+	import states.PlayState;
 	import core.Config;
 	
 	[SWF(width = "1280", height = "720", backgroundColor = "0x000000", frameRate = "30")]
 	public class Game extends Sprite {
 		public static const ASSETS:Assets = new Assets; 
+		public static const MENU_STATE:Number = 0;
 		public static const PLAY_STATE:Number = 1;
+		public static const GAME_OVER_STATE:Number = 2;
+		public static const INSTRUCTION_STATE:Number = 3; 
+		public static const PAUSE_STATE:Number = 4; 
+		
 		private var _currentState:State;
 		
 		public function Game() 
@@ -44,7 +49,7 @@ package core {
 				_currentState = null; 
 			}
 			if (nextState == PLAY_STATE){
-				_currentState = new Play(this);
+				_currentState = new PlayState(this);
 			}
 			addChild(Sprite(_currentState));
 			

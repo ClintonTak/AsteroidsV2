@@ -14,7 +14,7 @@ package core
 		
 		public function Config(){}
 		
-		public static const BLACK:uint = 0x000000;
+		/*public static const BLACK:uint = 0x000000;
 		public static const WHITE:uint = 0xFFFFFF;
 		public static const RED:uint = 0xFF0000; 
 		public static const GREEN:uint = 0x00FF00; 
@@ -24,15 +24,7 @@ package core
 		public static const WORLD_WIDTH:Number = 1280;
 		public static const WORLD_HEIGHT:Number = 720;
 		public static const WORLD_CENTER_X:Number = WORLD_WIDTH * .5;
-		public static const WORLD_CENTER_Y:Number = WORLD_HEIGHT * .5;
-		
-		public static const SHIP_HEIGHT:Number = 15; 
-		public static const SHIP_WIDTH:Number = 25; 
-		public static const SHIP_THRUST:Number = 1.25; // increae of acceleration per frame
-		public static const SHIP_ROTATIONAL_THRUST:Number = 8;//in degrees
-		public static const BULLET_IMPULSE:Number = 10; //pixels per frmae 
-		public static const TIME_BETWEEN_SHOTS:Number = 80; 
-		public static const BULLET_TIME_TO_LIVE:Number = 90; //frames
+		public static const WORLD_CENTER_Y:Number = WORLD_HEIGHT * .5;*/
 		
 		public static const TO_RAD:Number = (Math.PI / 180); 
 		public static const TO_DEG:Number = (180 / Math.PI); 
@@ -116,8 +108,6 @@ package core
 		public static function getLevel(id:Number):Object{
 			var data:Object = {}; 
 			var values:XMLList = Config._data["level"].(@id == id.toString2);
-			
-			//.level
 			return data; 
 		}
 		

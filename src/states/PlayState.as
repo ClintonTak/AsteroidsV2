@@ -41,16 +41,16 @@ package states
 	 *
 	 * */
 
-	public class Play extends State{
+	public class PlayState extends State{
 		private var _bullets:Vector.<Entity> = new Vector.<Entity>; 
 		private var _asteroids:Vector.<Entity> = new Vector.<Entity>;
 		private var _gfx:Vector.<Entity> = new Vector.<Entity>;
-		private var _ship:Ship = new Ship( Config.WORLD_WIDTH * .5, Config.WORLD_HEIGHT * .5); 
+		private var _ship:Ship = new Ship( Config.getNumber("width", "world") * .5, Config.getNumber("height", "world") * .5); 
 		private const TO_SPAWN:Array = [Asteroid.TYPE_BIG, Asteroid.TYPE_BIG, Asteroid.TYPE_BIG,
 										Asteroid.TYPE_SMALL, Asteroid.TYPE_MEDIUM, Asteroid.TYPE_SMALL];
 		public var _collisions:Sprite = new Sprite(); 
 										
-		public function Play(fsm:Game){
+		public function PlayState(fsm:Game){
 			super(fsm);
 			 _ship.addEventListener(PlayerShotEvent.PLAYER_SHOT, onPlayerShot, false, 0, true); 
 			Key.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
@@ -79,8 +79,8 @@ package states
 			for each (var i:Number in TO_SPAWN){
 				var xpos:Number = (Math.random() < .5) 
 									? Utils.randomInt(0, _ship.x - noSpawnZone)
-									: Utils.randomInt(_ship.x + noSpawnZone, Config.WORLD_WIDTH);
-				var ypos:Number = Utils.randomInt(0, Config.WORLD_HEIGHT); 
+									: Utils.randomInt(_ship.x + noSpawnZone, Config.getNumber("width", "world"));
+				var ypos:Number = Utils.randomInt(0, Config.getNumber("height", "world")); 
 				addEntity(new Asteroid(xpos, ypos, i)); 
 			}
 		}

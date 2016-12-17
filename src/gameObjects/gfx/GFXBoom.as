@@ -3,12 +3,11 @@ package gameObjects.gfx{
 	import core.Config;
 	import core.Utils;
 	public class GFXBoom extends GFX {
-		private static const minSpeed:Number = -16; 
-		private static const maxSpeed:Number = 16 ; 
-		public function GFXBoom(x:Number=0, y:Number=0, text:String="GFX", size:Number=14, color:uint=0xFFFFFF) 
+		 
+		public function GFXBoom(x:Number=0, y:Number=0) 
 		{
-			super(x, y, "BOOM!", 14, Config.WHITE);
-			_vr = 16;
+			super(x, y, Config.getSetting("text", "gfxboom"), Config.getNumber("size", "gfxboom"), Config.getColor("color", "gfxboom"));
+			_vr = Config.getNumber("rotation", "gfxboom");
 			
 						
 		}

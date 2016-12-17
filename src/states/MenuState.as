@@ -4,10 +4,10 @@ package states
 	 * ...
 	 * @author Clinton Tak
 	 */
-	public class GameOver 
+	public class MenuState 
 	{
 		
-		public function GameOver() 
+		public function MenuState() 
 		{
 			
 		}

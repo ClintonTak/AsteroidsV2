@@ -1,12 +1,11 @@
 package gameObjects.gfx {
-	
+	import core.Config;
 	public class GFXScreenShake extends GFX {
-		private var _shakeSize:Number = 7; 
+		private var _shakeSize:Number = Config.getNumber("shakeSize", "gfxscreenshake"); 
 		
 		public function GFXScreenShake(){
 			super();
-			//removeChild(_label); 
-			//_label = null; 
+		
 		}
 		
 		override public function update():void{

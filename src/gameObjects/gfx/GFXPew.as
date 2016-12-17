@@ -2,13 +2,12 @@ package gameObjects.gfx{
 	import core.Config;
 	import core.Utils;
 	public class GFXPew extends GFX {
-		private static const minSpeed:Number = -8; 
-		private static const maxSpeed:Number = 8 ; 
-		public function GFXPew(x:Number=0, y:Number=0, text:String="GFX", size:Number=14, color:uint=0xFFFFFF) 
+		public function GFXPew(x:Number=0, y:Number=0) 
 		{
-			super(x, y, "Pew!", 14, Config.WHITE);
-			_vx = Utils.randomInt(minSpeed, maxSpeed);
-			_vy = Utils.randomInt(minSpeed, maxSpeed); 
+			super(x, y, Config.getSetting("text","gfxpew"), Config.getNumber("size", "gfxpew"), Config.getColor("color", "gfxpew"));
+			_vx = Utils.randomInt(Config.getNumber("minSpeed", "gfxpew"), Config.getNumber("maxSpeed", "gfxpew"));
+			_vy = Utils.randomInt(Config.getNumber("minSpeed", "gfxpew"), Config.getNumber("maxSpeed", "gfxpew")); 
+			
 						
 		}
 		

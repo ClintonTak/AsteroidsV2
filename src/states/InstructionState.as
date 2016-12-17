@@ -4,10 +4,10 @@ package states
 	 * ...
 	 * @author Clinton Tak
 	 */
-	public class Menu 
+	public class InstructionState 
 	{
 		
-		public function Menu() 
+		public function InstructionState() 
 		{
 			
 		}

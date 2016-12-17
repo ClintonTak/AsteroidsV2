@@ -2,10 +2,10 @@ package gameObjects.gfx{
 	import core.Config;
 	import core.Utils;
 	public class GFXOuch extends GFX { 
-		public function GFXOuch(x:Number=0, y:Number=0, text:String="GFX", size:Number=14, color:uint=0xFFFFFF) 
+		public function GFXOuch(x:Number=0, y:Number=0) 
 		{
-			super(x, y, "Ouch!", 14, Config.WHITE);
-			_vr = 16;
+			super(x, y, Config.getSetting("text", "gfxouch"), Config.getNumber("size", "gfxouch"), Config.getColor("color", "gfxouch"));
+			_vr = Config.getNumber("rotation", "gfxouch");
 			
 						
 		}

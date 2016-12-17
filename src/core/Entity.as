@@ -3,7 +3,7 @@ package core {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import states.Play;
+	import states.PlayState;
 	public class Entity extends Sprite {
 		public function get halfHeight():Number { return height * 0.5;  }
 		public function get halfWidth():Number { return width * 0.5;  }
@@ -25,7 +25,7 @@ package core {
 		protected var _vx:Number = 0; 
 		protected var _vy:Number = 0; 
 		protected var _vr:Number = 0; 
-		protected var _color:uint = Config.WHITE; 
+		protected var _color:uint = Config.getColor("white", "color"); 
 		public var _isAlive:Boolean = true; 
 		
 		public function Entity(x:Number = 0, y:Number = 0){
@@ -55,14 +55,14 @@ package core {
 		}
 		public function worldWrap():void{
 			if (right < 0){
-				left = Config.WORLD_WIDTH;
-			}else if (left > Config.WORLD_WIDTH){
+				left = Config.getNumber("width", "world");
+			}else if (left > Config.getNumber("width", "world")){
 				right = 0; 
 			}
 			
 			if (bottom < 0){
-				top = Config.WORLD_HEIGHT; 
-			}else if (top > Config.WORLD_HEIGHT){
+				top = Config.getNumber("height", "world"); 
+			}else if (top > Config.getNumber("height", "world")){
 				bottom = 0; 
 			}
 		}
@@ -78,9 +78,9 @@ package core {
 		}
 		
 		protected function drawCollisionHull():void{
-			Play(parent)._collisions.graphics.lineStyle(1 , 0xFFFF00, .7);
-			Play(parent)._collisions.graphics.moveTo(centerX, centerY); 
-			Play(parent)._collisions.graphics.drawCircle(centerX, centerY, this.radius); 
+			PlayState(parent)._collisions.graphics.lineStyle(1 , 0xFFFF00, .7);
+			PlayState(parent)._collisions.graphics.moveTo(centerX, centerY); 
+			PlayState(parent)._collisions.graphics.drawCircle(centerX, centerY, this.radius); 
 		}
 		
 		public function rotate(degrees:Number):void{

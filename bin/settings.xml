@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <asteroidgame>
 	<settings entity_color = "0xFFFFFF" line_size = "2" />
-	<ship width = "25" height = "15" thrust = "1.25" rotational_thrust = "8" time_between_shots = "24" />
+	<ship width = "25" height = "15" thrust = "1.25" rotational_thrust = "8" time_between_shots = "30" />
 	<asteroid_big radius = "64" start_speed = "2" child_type = "asteroid_medium" child_count = "3" />
 	<asteroid_medium radius = "32" start_speed = "6" child_type = "asteroid_small" child_count = "2" />
 	<asteroid_big radius = "16" start_speed = "12" child_type = "" child_count = "0" />
-	<bullet impulse = "13" time_to_live = "80" />
-	<gfxboom text = "Boom!" color = "0xD2FFD2" rotation = "12" face_rate = ".92" />
-	<gfxouch text = "Ouch!" color = "0xE0852C" rotation = "12" face_rate = ".92" />
-	<gfxpew text = "Pew!" color = "0x0763EF" rotation = "12" face_rate = ".92" />
+	<bullet impulse = "13" time_to_live = "40" thickness = "4" color = "0xFFFFFF" />
+	<gfxboom text = "Boom!" color = "0xD2FFD2" rotation = "12" fade_rate = ".92" size = "14" />
+	<gfxouch text = "Ouch!" color = "0xE0852C" rotation = "12" fade_rate = ".92" size = "10"/>
+	<gfxpew text = "Pew!" color = "0x0763EF" rotation = "12" fade_rate = ".92" size = "6" minSpeed = "-8" maxSpeed="8" />
+	<gfxscreenshake shakeSize = "7" />
 	<gfxshake shake_size = "7" />
+	
+	<color black = "0x000000" white = "0xFFFFFF" red = "0xFF0000" green = "0x00FF00" blue = "0x0000FF" />
+	<world height = "720" width = "1280" center_x = "640" center_y = "360" line_size = "2" />
 </asteroidgame>	

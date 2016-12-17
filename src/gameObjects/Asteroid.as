@@ -36,7 +36,7 @@ package gameObjects {
 		}
 		public function draw():void{
 			graphics.clear();
-			graphics.lineStyle(Config.LINE_SIZE, _color);
+			graphics.lineStyle(Config.getNumber("line_size", "settings"), _color);
 			graphics.drawCircle(_radius, _radius, _radius); 
 		}
 		
