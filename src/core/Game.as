@@ -1,17 +1,23 @@
 package core {
 	import flash.display.Sprite;
 	import flash.events.Event; 
+	import states.GameOverState;
+	import states.HighScoresState;
+	import states.InstructionState;
+	import states.MainMenuState;
 	import states.PlayState;
 	import core.Config;
 	
 	[SWF(width = "1280", height = "720", backgroundColor = "0x000000", frameRate = "30")]
 	public class Game extends Sprite {
 		public static const ASSETS:Assets = new Assets; 
+		
 		public static const MENU_STATE:Number = 0;
 		public static const PLAY_STATE:Number = 1;
 		public static const GAME_OVER_STATE:Number = 2;
 		public static const INSTRUCTION_STATE:Number = 3; 
 		public static const PAUSE_STATE:Number = 4; 
+		public static const HIGHSCORES_STATE:Number = 5; 
 		
 		private var _currentState:State;
 		
@@ -29,8 +35,8 @@ package core {
 			addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true); 
 			addEventListener(Event.DEACTIVATE, onDeactivate, false, 0, true); 
 			core.Key.init(stage); 
-			changeState(PLAY_STATE); 
-
+			changeState(MENU_STATE); 
+			//come back to this
 			
 		}
 		private function onDeactivate(e:Event):void{
@@ -50,7 +56,13 @@ package core {
 			}
 			if (nextState == PLAY_STATE){
 				_currentState = new PlayState(this);
-			}
+			}else if (nextState == MENU_STATE){
+				_currentState = new MainMenuState(this); 
+			}else if (nextState == INSTRUCTION_STATE){
+				_currentState = new InstructionState(this); 
+			}else if (nextState == GAME_OVER_STATE){
+				_currentState = new GameOverState(this); 
+			}//highscores
 			addChild(Sprite(_currentState));
 			
 			

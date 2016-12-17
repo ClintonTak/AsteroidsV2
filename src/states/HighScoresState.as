@@ -4,10 +4,10 @@ package states
 	 * ...
 	 * @author Clinton Tak
 	 */
-	public class MenuState 
+	public class HighScoresState 
 	{
 		
-		public function MenuState() 
+		public function HighScoresState() 
 		{
 			
 		}

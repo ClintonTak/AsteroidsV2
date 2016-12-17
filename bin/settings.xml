@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <asteroidgame>
-	<settings entity_color = "0xFFFFFF" line_size = "2" />
+	<settings entity_color = "0xFFFFFF" line_size = "2" font = "Chunkfive" />
 	<ship width = "25" height = "15" thrust = "1.25" rotational_thrust = "8" time_between_shots = "30" />
 	<asteroid_big radius = "64" start_speed = "2" child_type = "asteroid_medium" child_count = "3" />
 	<asteroid_medium radius = "32" start_speed = "6" child_type = "asteroid_small" child_count = "2" />
@@ -12,6 +12,6 @@
 	<gfxscreenshake shakeSize = "7" />
 	<gfxshake shake_size = "7" />
 	
-	<color black = "0x000000" white = "0xFFFFFF" red = "0xFF0000" green = "0x00FF00" blue = "0x0000FF" />
+	<color black = "0x000000" white = "0xFFFFFF" red = "0xFF0000" green = "0x00FF00" blue = "0x0000FF" grey = "0xA9A9A9"/>
 	<world height = "720" width = "1280" center_x = "640" center_y = "360" line_size = "2" />
 </asteroidgame>	

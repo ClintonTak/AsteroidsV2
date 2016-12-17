@@ -15,9 +15,12 @@ package gameObjects {
 		private var _rearRight:Point = new Point(0, 0); 
 		private var _nose:Point = new Point(Config.getNumber("width", "ship"), Config.getNumber("height", "ship") * .5 ); 
 		private var _rearLeft:Point = new Point(0,  Config.getNumber("height", "ship")); 
-
 		private var _engineHole:Point = new Point(Config.getNumber("width", "ship")*.125, Config.getNumber("height", "ship") * .5); 
 		private var _nextShot:Number = getTimer() + Config.getNumber("time_between_shots", "ship"); 
+		
+		private var _playerLives:Number = 3; 
+		//private var _isAlive = true; 
+		
 		public function Ship(x:Number = 0, y:Number = 0) {
 			super(x, y);
 		}

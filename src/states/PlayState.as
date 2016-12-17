@@ -1,5 +1,6 @@
 package states 
 {
+	import com.adobe.tvsdk.mediacore.events.NotificationEvent;
 	import core.Entity;
 	import core.Game;
 	import core.State; 
@@ -42,6 +43,8 @@ package states
 	 * */
 
 	public class PlayState extends State{
+		private var _fsm:Game; 
+		private var _lives:Number = 3; 
 		private var _bullets:Vector.<Entity> = new Vector.<Entity>; 
 		private var _asteroids:Vector.<Entity> = new Vector.<Entity>;
 		private var _gfx:Vector.<Entity> = new Vector.<Entity>;
@@ -52,7 +55,8 @@ package states
 										
 		public function PlayState(fsm:Game){
 			super(fsm);
-			 _ship.addEventListener(PlayerShotEvent.PLAYER_SHOT, onPlayerShot, false, 0, true); 
+			_fsm = fsm; 
+			_ship.addEventListener(PlayerShotEvent.PLAYER_SHOT, onPlayerShot, false, 0, true); 
 			Key.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			addChild(_collisions); 
 			addEntity(_ship); 
@@ -142,6 +146,11 @@ package states
 					_ship.onCollision(a);
 					a.onCollision(_ship);
 					addEntity(new GFXOuch(_ship.centerX, _ship.centerY)); 
+					_lives--; 
+					if (_lives == 0){
+						_fsm.changeState(Game.GAME_OVER_STATE); 
+						 
+					}
 					break;
 				}
 			}
@@ -170,10 +179,12 @@ package states
 			removeDead(_bullets);
 			removeDead(_asteroids);
 			removeDead(_gfx); 
-			if (!_ship._isAlive){
-				_ship.destroy();
-				removeChild(_ship);
-				//signal game over
+			if (_ship != null){
+				if (!_ship._isAlive){
+					_ship.destroy();
+					removeChild(_ship);
+					//signal game over
+				}
 			}
 		}
 
