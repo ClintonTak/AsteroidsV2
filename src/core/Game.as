@@ -12,11 +12,14 @@ package core {
 		
 		public function Game() 
 		{
-			Config.getSetting("ship_thrust"); 
-			if (stage) init(); 
-			else addEventListener(Event.ADDED_TO_STAGE, init); 
+			Config.loadConfig(); 
+			Config.addEventListener(Event.COMPLETE, init, false, 0, true); 
 		}
 		private function init(e:Event = null):void {
+			if (!stage){
+				addEventListener(Event.ADDED_TO_STAGE, init, false, 0, false); 
+				return; 
+			}
 			removeEventListener(Event.ADDED_TO_STAGE, init); 
 			addEventListener(Event.ENTER_FRAME, onEnterFrame, false, 0, true); 
 			addEventListener(Event.DEACTIVATE, onDeactivate, false, 0, true); 

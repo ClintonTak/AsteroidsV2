@@ -42,9 +42,7 @@ package gameObjects {
 		
 		private function checkInput():void{
 			if (Key.isDown(Key.SHOOT) && getTimer()> _nextShot){
-				var nose:Point = localToGlobal(_nose);
-				dispatchEvent(new PlayerShotEvent(nose.x, nose.y, rotation)); 
-				_nextShot = getTimer() + Config.TIME_BETWEEN_SHOTS
+				shoot(); 
 			}
 			if (Key.isDown(Key.LEFT)){
 				_vr = -10; 
@@ -85,6 +83,12 @@ package gameObjects {
 		override protected function drawCollisionHull():void{
 			super.drawCollisionHull();
 			
+		}
+		
+		private function shoot():void{
+			var nose:Point = localToGlobal(_nose); 
+			dispatchEvent(new PlayerShotEvent(nose.x, nose.y, rotation)); 
+			_nextShot = getTimer() + Config.getNumber("time_between_shots", "ship"); 
 		}
 		
 		public function draw():void{
