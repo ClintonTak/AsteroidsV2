@@ -9,6 +9,11 @@ package core {
 		{
 			
 		}
+		public static function getRandomElementOf(array:Array):Object {
+			var idx:int=Math.floor(Math.random() * array.length);
+			return array[idx];
+		}
+		
 		public static function randomInt(min:Number, max:Number):Number{
 			return Math.floor(Math.random() * (max - min + 1)) + min; 
 		}

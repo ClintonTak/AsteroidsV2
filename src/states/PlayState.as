@@ -11,6 +11,7 @@ package states
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.TimerEvent;
 	import gameObjects.Bullet;
 	import gameObjects.Ship;
 	import events.PlayerShotEvent;
@@ -23,28 +24,13 @@ package states
 	import gameObjects.gfx.GFXScreenShake;
 	import Assets;
 	import flash.display.SimpleButton;
-	
-	
-	/*
-	 * Ship
-	 * 	add the engine flame
-	 * bullets
-	 * 	custom event dispatch
-	 * 	make key an event dispatcher
-	 * 	projecting positions
-	 * asteroids
-	 * 	break into smaller parts
-	 * collisions 
-	 * 	circle circle
-	 * 	line circle
-	 * fgx
-	 * dynamic config 
-	 * 	getsetting()/ getvar()
-	 * loadsettingsfrom cml
-	 *
-	 * */
+	import ui.Label;
+	import flash.utils.Timer;
 
 	public class PlayState extends State{
+		private var _asteroidCount:Number = 0; 
+		private var _playerScore:Number = 0; 
+		private var _scoreBoard:Label = new Label("Score: 0", 56, Config.getColor("white", "color") , Config.getSetting("font", "settings") , true); 
 		private var _fsm:Game; 
 		private var _lives:Number = 3; 
 		private var _healthShip1:SimpleButton = new SimpleButton(Assets.getImage("ship"), 
@@ -61,24 +47,37 @@ package states
 		private const TO_SPAWN:Array = [Asteroid.TYPE_BIG, Asteroid.TYPE_BIG, Asteroid.TYPE_BIG,
 										Asteroid.TYPE_SMALL, Asteroid.TYPE_MEDIUM, Asteroid.TYPE_SMALL];
 		public var _collisions:Sprite = new Sprite(); 
-										
+		private var _gameAlive:Boolean = true; 								
 		public function PlayState(fsm:Game){
 			super(fsm);
 			_fsm = fsm; 
 			_ship.addEventListener(PlayerShotEvent.PLAYER_SHOT, onPlayerShot, false, 0, true); 
-			Key.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 			addChild(_collisions); 
 			addEntity(_ship); 
 			mouseEnabled = false;
 			mouseChildren = false; 
-			spawnAsteroids();
+			//spawnAsteroids();
 			healthDisplay();
+			addChild(_scoreBoard); 
+			
+			
 		}
-		public function onKeyDown(e:KeyboardEvent):void{
-			if (e.keyCode == Keyboard.R){
-				spawnAsteroids(); 
-			}
+		
+		
+		public function singleAsteroid():void{
+			var noSpawnZone:Number = _ship.radius + 100; 
+			var xpos:Number = (Math.random() < .5) 
+									? Utils.randomInt(0, _ship.x - noSpawnZone)
+									: Utils.randomInt(_ship.x + noSpawnZone, Config.getNumber("width", "world"));
+			var ypos:Number = Utils.randomInt(0, Config.getNumber("height", "world"));
+			
+			var type:Number = Number(Utils.getRandomElementOf([1, .8, .4])); 
+			addEntity(new Asteroid(xpos, ypos, type));
+			_asteroidCount ++; 
+			//_minuteTimer = new Timer(1000, 5); 
+			//_minuteTimer.start(); 
 		}
+
 		private function getAllEntities(includePlayer:Boolean = false):Vector.<Entity>{
 			var entities:Vector.<Entity> = _asteroids.concat(_bullets, _gfx);
 			if (includePlayer){
@@ -96,7 +95,10 @@ package states
 									: Utils.randomInt(_ship.x + noSpawnZone, Config.getNumber("width", "world"));
 				var ypos:Number = Utils.randomInt(0, Config.getNumber("height", "world")); 
 				addEntity(new Asteroid(xpos, ypos, i)); 
+				//_asteroidCount++;
 			}
+			
+			 
 		}
 		
 		public function onPlayerShot(e:PlayerShotEvent):void{
@@ -123,13 +125,16 @@ package states
 			var newType:Number = Asteroid.TYPE_MEDIUM;
 			if (e._type == Asteroid.TYPE_BIG){
 				spawnCount = 3; 
+				_asteroidCount = _asteroidCount + 3; 
 			} else if (e._type == Asteroid.TYPE_MEDIUM){
 				spawnCount = 2; 
 				newType = Asteroid.TYPE_SMALL
+				_asteroidCount = _asteroidCount + 2; 
 			}
 			while (spawnCount--){
 				addEntity(new Asteroid(e._x, e._y, newType));
 			}
+			
 		}
 
 		override public function update():void{
@@ -139,7 +144,20 @@ package states
 			}
 			checkCollisions();
 			removeAllDeadEntities(); 
-			//controlHealth();
+			_scoreBoard.text = "Score: " + _playerScore; 
+			if (_playerScore < 999){
+				
+				_scoreBoard.x = 1100 - (_scoreBoard.textWidth * .5);
+			} 
+			if (_playerScore > 1000){
+				_scoreBoard.x = 1000 - (_scoreBoard.textWidth * .5);
+			}
+			
+			if (_asteroidCount < 7){
+				singleAsteroid(); 
+			}
+			trace(_asteroidCount); 
+			
 		}
 		
 	
@@ -169,6 +187,8 @@ package states
 						a.onCollision(b);
 						addEntity(new GFXBoom(b.x, b.y)); 
 						addEntity(new GFXScreenShake()); 
+						_playerScore = _playerScore + 25; 
+						_asteroidCount--; 
 						break;
 					}
 				}

@@ -8,6 +8,7 @@ package states
 	import ui.Label; 
 	import core.Game;
 	import core.State;
+	import SoundManager;
 	import Assets;
 	public class MainMenuState extends State{
 		private var _fsm:Game;
@@ -18,11 +19,11 @@ package states
 							Assets.getImage("instructionshover"), Assets.getImage("instructionshover"), Assets.getImage("instructions")); 
 		private var _highScoresButton:SimpleButton = new SimpleButton(Assets.getImage("highscores"), 
 							Assets.getImage("highscoreshover"), Assets.getImage("highscoreshover"), Assets.getImage("highscores")); 
-		
+		//private var _startSFX:SoundManager = new SoundManager();
 		public function MainMenuState(fsm:Game){
 			super(fsm);
 			_fsm = fsm;
-			//_backgroundSFX.playSound(); 
+			
 			addChild(_label); 
 			_label.x = Config.getNumber("center_x", "world") - _label.textWidth * .5; 
 			_label.y = Config.getNumber("center_y", "world") - 250;

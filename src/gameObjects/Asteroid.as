@@ -3,10 +3,7 @@ package gameObjects {
 	import core.Utils;
 	import core.Config;
 	import events.AsteroidBreakEvent;
-	/**
-	 * ...
-	 * @author Clinton Tak
-	 */
+
 	public class Asteroid extends Entity{
 		public static const ASTEROID_BREAK:String = "asteroidBreak"; 
 		public static const TYPE_BIG:Number = 1; 

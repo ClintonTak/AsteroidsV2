@@ -8,30 +8,30 @@ package{
 		public var ChunkFiveClass:Class; 
 
 		
-		[Embed(source = "assets/PlayButton.png")]
+		[Embed(source = "assets/images/PlayButton.png")]
 		private static const PlayButton:Class;
-		[Embed(source = "assets/InstructionsButton.png")]
+		[Embed(source = "assets/images/InstructionsButton.png")]
 		private static const InstructionsButton:Class;
-		[Embed(source = "assets/HighScoresButton.png")]
+		[Embed(source = "assets/images/HighScoresButton.png")]
 		private static const HighScoresButton:Class;
 		
-		[Embed(source = "assets/PlayButtonHover.png")]
+		[Embed(source = "assets/images/PlayButtonHover.png")]
 		private static const PlayButtonHover:Class;
-		[Embed(source = "assets/InstructionsButtonHover.png")]
+		[Embed(source = "assets/images/InstructionsButtonHover.png")]
 		private static const InstructionsButtonHover:Class;
-		[Embed(source = "assets/HighScoresButtonHover.png")]
+		[Embed(source = "assets/images/HighScoresButtonHover.png")]
 		private static const HighScoresButtonHover:Class;
 		
-		[Embed(source = "assets/BackButton.png")]
+		[Embed(source = "assets/images/BackButton.png")]
 		private static const BackButton:Class;
 		
-		[Embed(source = "assets/BackButton.png")]
+		[Embed(source = "assets/images/BackButton.png")]
 		private static const ButtonNormal:Class;
 		
-		[Embed(source = "assets/WASD.png")]
+		[Embed(source = "assets/images/WASD.png")]
 		private static const WASD:Class
 		
-		[Embed(source = "assets/ship.png")]
+		[Embed(source = "assets/images/ship.png")]
 		private static const Ship:Class
 		
 		public static function getImage(n:String):Bitmap{
