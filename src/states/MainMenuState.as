@@ -19,7 +19,7 @@ package states
 							Assets.getImage("instructionshover"), Assets.getImage("instructionshover"), Assets.getImage("instructions")); 
 		private var _highScoresButton:SimpleButton = new SimpleButton(Assets.getImage("highscores"), 
 							Assets.getImage("highscoreshover"), Assets.getImage("highscoreshover"), Assets.getImage("highscores")); 
-		//private var _startSFX:SoundManager = new SoundManager();
+		private var _startSFX:SoundManager = new SoundManager("./assets/startGame.mp3"); 
 		public function MainMenuState(fsm:Game){
 			super(fsm);
 			_fsm = fsm;
@@ -47,7 +47,7 @@ package states
 		}
 		
 		public function onClickPlay(e:MouseEvent):void {
-			//_startSFX.playSound(); 
+			_startSFX.playSound(); 
 			//_backgroundSFX.stopSound(); 
 			_fsm.changeState(Game.PLAY_STATE); 
 		}

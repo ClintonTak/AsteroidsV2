@@ -12,10 +12,12 @@ package states {
 	public class GameOverState extends State{
 		private var _fsm:Game;
 		
-		private var _instrux0:Label = new Label("Game Over.", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
-		
+		private var _instrux0:Label = new Label("Game Over.", 48, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
+		private var _highScore:Label = new Label("Your score was: ", 40, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
 		private var _backButton:SimpleButton = new SimpleButton(Assets.getImage("back"), 
-							Assets.getImage("back"), Assets.getImage("back"), Assets.getImage("back"));  
+							Assets.getImage("back"), Assets.getImage("back"), Assets.getImage("back")); 
+							
+		private var _playerScore:Number = 0; 
 		public function GameOverState(fsm:Game){
 			var centerX:Number = Config.getNumber("center_x", "world"); 
 			var centerY:Number = Config.getNumber("center_y", "world");
@@ -33,6 +35,11 @@ package states {
 			addChild(_instrux0);
 			_instrux0.x = centerX - _instrux0.textWidth * .5; 
 			_instrux0.y = centerY + _instrux0.textHeight;
+			
+			addChild(_highScore);
+			_highScore.x = centerX - _highScore.textWidth * .5; 
+			_highScore.y = _instrux0.y + _highScore.textHeight;
+			_highScore.text = "Your score was: " + _playerScore; 
 			
 			
 		}

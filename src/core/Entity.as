@@ -74,7 +74,6 @@ package core {
 		
 		public function onCollision(e:Entity):void{
 			_isAlive = false; 
-			drawCollisionHull(); //debug new 
 		}
 		
 		protected function drawCollisionHull():void{

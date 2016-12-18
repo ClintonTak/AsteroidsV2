@@ -12,11 +12,13 @@ package states
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.TimerEvent;
+	import flash.media.Sound;
 	import gameObjects.Bullet;
 	import gameObjects.Ship;
 	import events.PlayerShotEvent;
 	import gameObjects.Asteroid;
 	import flash.ui.Keyboard;
+	import gameObjects.UFO;
 	import gameObjects.gfx.GFX;
 	import gameObjects.gfx.GFXPew;
 	import gameObjects.gfx.GFXBoom;
@@ -25,12 +27,14 @@ package states
 	import Assets;
 	import flash.display.SimpleButton;
 	import ui.Label;
-	import flash.utils.Timer;
-
+	import flash.events.MouseEvent;
+	import SoundManager;
 	public class PlayState extends State{
 		private var _asteroidCount:Number = 0; 
 		private var _playerScore:Number = 0; 
 		private var _scoreBoard:Label = new Label("Score: 0", 56, Config.getColor("white", "color") , Config.getSetting("font", "settings") , true); 
+		private var _level:Label = new Label("Level: 0", 48, Config.getColor("white", "color") , Config.getSetting("font", "settings") , true); 
+		private var _currentLevel:Number = 0; 
 		private var _fsm:Game; 
 		private var _lives:Number = 3; 
 		private var _healthShip1:SimpleButton = new SimpleButton(Assets.getImage("ship"), 
@@ -43,11 +47,25 @@ package states
 		private var _bullets:Vector.<Entity> = new Vector.<Entity>; 
 		private var _asteroids:Vector.<Entity> = new Vector.<Entity>;
 		private var _gfx:Vector.<Entity> = new Vector.<Entity>;
+		private var _ufos:Vector.<Entity> = new Vector.<Entity>; 
+		
 		private var _ship:Ship = new Ship( Config.getNumber("width", "world") * .5, Config.getNumber("height", "world") * .5); 
-		private const TO_SPAWN:Array = [Asteroid.TYPE_BIG, Asteroid.TYPE_BIG, Asteroid.TYPE_BIG,
-										Asteroid.TYPE_SMALL, Asteroid.TYPE_MEDIUM, Asteroid.TYPE_SMALL];
 		public var _collisions:Sprite = new Sprite(); 
-		private var _gameAlive:Boolean = true; 								
+									
+		private var _paused:Boolean = false;
+		private var _gamePaused:Label = new Label ("Game is paused.", 84, Config.getColor("white","color"), Config.getSetting("font", "settings"), true);
+		private var _resumeButton:SimpleButton = new SimpleButton(Assets.getImage("resume"), 
+							Assets.getImage("resumehover"), Assets.getImage("resumehover"), Assets.getImage("resume")); 
+		
+		private var _ufoAlive:Boolean = false;
+		private var _ufo:UFO = new UFO(0, 0); 
+		
+		
+		private var _fireSFX:SoundManager = new SoundManager("./assets/fire.mp3"); 
+		private var _bangSmall:SoundManager = new SoundManager("./assets/bangSmall.mp3");
+		private var _bangMedium:SoundManager = new SoundManager("./assets/bangMedium.mp3");
+		private var _bangLarge:SoundManager = new SoundManager("./assets/bangLarge.mp3");
+		private var _background:SoundManager = new SoundManager("./assets/backgroundmusic.mp3"); 
 		public function PlayState(fsm:Game){
 			super(fsm);
 			_fsm = fsm; 
@@ -56,10 +74,10 @@ package states
 			addEntity(_ship); 
 			mouseEnabled = false;
 			mouseChildren = false; 
-			//spawnAsteroids();
 			healthDisplay();
 			addChild(_scoreBoard); 
-			
+			addChild(_level); 
+			_background.playSound();
 			
 		}
 		
@@ -74,8 +92,7 @@ package states
 			var type:Number = Number(Utils.getRandomElementOf([1, .8, .4])); 
 			addEntity(new Asteroid(xpos, ypos, type));
 			_asteroidCount ++; 
-			//_minuteTimer = new Timer(1000, 5); 
-			//_minuteTimer.start(); 
+			
 		}
 
 		private function getAllEntities(includePlayer:Boolean = false):Vector.<Entity>{
@@ -86,25 +103,13 @@ package states
 			return entities;
 			
 		}
-		public function spawnAsteroids():void{
-			var noSpawnZone:Number = _ship.radius + 100; 
-			
-			for each (var i:Number in TO_SPAWN){
-				var xpos:Number = (Math.random() < .5) 
-									? Utils.randomInt(0, _ship.x - noSpawnZone)
-									: Utils.randomInt(_ship.x + noSpawnZone, Config.getNumber("width", "world"));
-				var ypos:Number = Utils.randomInt(0, Config.getNumber("height", "world")); 
-				addEntity(new Asteroid(xpos, ypos, i)); 
-				//_asteroidCount++;
-			}
-			
-			 
-		}
+		
 		
 		public function onPlayerShot(e:PlayerShotEvent):void{
 			var b:Bullet = new Bullet(e._x, e._y, e._direction); 
 			addEntity(new GFXPew(e._x, e._y)); 
 			addEntity(b);
+			_fireSFX.playSound();
 			
 		}
 		
@@ -116,6 +121,8 @@ package states
 				_asteroids.push(e); 
 			}else if (e is GFX){
 				_gfx.push(e); 
+			}else if (e is UFO){
+				_ufos.push(e);
 			}
 			addChild(e); 
 		}
@@ -125,11 +132,15 @@ package states
 			var newType:Number = Asteroid.TYPE_MEDIUM;
 			if (e._type == Asteroid.TYPE_BIG){
 				spawnCount = 3; 
-				_asteroidCount = _asteroidCount + 3; 
+				_asteroidCount = _asteroidCount + 3;
+				_bangLarge.playSound(); 
 			} else if (e._type == Asteroid.TYPE_MEDIUM){
 				spawnCount = 2; 
 				newType = Asteroid.TYPE_SMALL
 				_asteroidCount = _asteroidCount + 2; 
+				_bangMedium.playSound(); 
+			} else {
+				_bangSmall.playSound(); 
 			}
 			while (spawnCount--){
 				addEntity(new Asteroid(e._x, e._y, newType));
@@ -145,19 +156,57 @@ package states
 			checkCollisions();
 			removeAllDeadEntities(); 
 			_scoreBoard.text = "Score: " + _playerScore; 
+			_level.text = "Level: " + _currentLevel; 
+			var minAstroidNumber:Number = 4; 
 			if (_playerScore < 999){
 				
 				_scoreBoard.x = 1100 - (_scoreBoard.textWidth * .5);
+				_level.x = 1200 - (_scoreBoard.textWidth * .5);
+				_level.y = _scoreBoard.y + _level.height; 
 			} 
 			if (_playerScore > 1000){
-				_scoreBoard.x = 1000 - (_scoreBoard.textWidth * .5);
+				_scoreBoard.x = 1050 - (_scoreBoard.textWidth * .5);
+				_level.y = _scoreBoard.y + _level.height; 
 			}
-			
-			if (_asteroidCount < 7){
+			if (_playerScore == 1000){
+				minAstroidNumber = 6;
+				_currentLevel = 1; 
+			} 
+			if (_playerScore == 2000){
+				minAstroidNumber == 8; 
+				_currentLevel = 2; 
+			}
+			if (_playerScore == 3000){
+				minAstroidNumber == 10; 
+				_currentLevel = 3; 
+			}
+			if (_asteroidCount < minAstroidNumber){
 				singleAsteroid(); 
+			} 
+			if (Key.isDown(Key.PAUSE)){
+				pause(); 
 			}
-			trace(_asteroidCount); 
 			
+			
+		}
+		
+		public function spawnUFO():void{
+		
+			_ufo = new UFO(0, 0); 
+			addEntity(_ufo); 
+			_ufoAlive = false; 
+		}
+		
+		public function ufoShoot(ufo:UFO):void{
+			var x:Number = ufo.centerX;
+			var y:Number = ufo.centerY; 
+			var dx:Number = x - _ship.centerX;
+			var dy:Number = y - _ship.centerY;
+			var radians:Number = Math.atan2(dy, dx); 
+			var dr:Number = ufo.rotation - (radians * Config.TO_DEG);
+			
+			var b:Bullet = new Bullet(x, y, dr)
+			addEntity(b); 
 		}
 		
 	
@@ -209,13 +258,6 @@ package states
 					break;
 				}
 			}
-			//walk through each _bullet
-				// walk through each _asteroid
-				// if bullet [i] is colloding with astroid [j]
-					//kill bullet
-					//split asteroid 
-				//else check if asteroid is colliding with the ship
-					//take away health? 
 		}
 		
 		public function removeDead(entities:Vector.<Entity>):void{
@@ -242,7 +284,35 @@ package states
 				}
 			}
 		}
-
+		
+		private function pause():void{
+			mouseEnabled = true;
+			mouseChildren = true; 
+			addChild(_gamePaused); 
+			addChild(_gamePaused);
+			
+			_gamePaused.x = Config.getNumber("center_x", "world") - _gamePaused.textWidth * .5; 
+			_gamePaused.y = Config.getNumber("center_y", "world") - _gamePaused.textHeight; 
+			
+			
+			addChild(_resumeButton); 
+			_resumeButton.x = Config.getNumber("center_x", "world") -_resumeButton.width * .5;
+			_resumeButton.y = _gamePaused.y + _resumeButton.height; 
+			_resumeButton.y =0; 
+			_resumeButton.addEventListener(MouseEvent.CLICK, resume); 
+			
+			stage.frameRate = 0; 
+		}
+		private function resume(e:MouseEvent):void{
+			stage.frameRate = 30; 
+			
+			removeChild(_resumeButton); 
+			removeChild(_gamePaused); 
+			mouseEnabled = false;
+			mouseChildren = false; 
+			
+		}
+		
 		override public function destroy():void{
 			var entities:Vector.<Entity> = getAllEntities(true);
 			for (var i:Number = 0; i < entities.length; i++){
@@ -251,6 +321,12 @@ package states
 			removeAllDeadEntities();
 			_ship = null; 
 			super.destroy(); 
+			_background.stopSound();
+			_fireSFX = null; 
+			_bangSmall = null; 
+			_bangMedium = null; 
+			_bangLarge = null; 
+			_background = null; 
 		}
 
  

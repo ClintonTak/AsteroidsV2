@@ -15,14 +15,13 @@ package states {
 		private var _instrux0:Label = new Label("Dodge the asteroids to survive and shoot them to gain points.", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
 		private var _instrux1:Label = new Label("Use W to move up, A to move left, S to move down, and D to move right. ", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
 		private var _instrux2:Label = new Label("Use spacebar to shoot. ", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true); 
-		private var _instrux3:Label = new Label("Collect powerups to help you survive. ", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true); 
-		
+		private var _instrux3:Label = new Label("Press Escape to pause the game.", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true); 
+		private var _instrux4:Label = new Label("As you go up levels, more astroids will spawn around you!", 24, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true); 
 		private var _backButton:SimpleButton = new SimpleButton(Assets.getImage("back"), 
 							Assets.getImage("back"), Assets.getImage("back"), Assets.getImage("back")); 
 		private var _wasd:SimpleButton = new SimpleButton(Assets.getImage("wasd"), Assets.getImage("wasd"), 
 							Assets.getImage("wasd"), Assets.getImage("wasd") ); 
 		public function InstructionState(fsm:Game){
-			//stage.color = Config.getColor("grey", "color"); 
 			super(fsm);
 			_fsm = fsm; 
 			var centerX:Number = Config.getNumber("center_x", "world"); 
@@ -42,6 +41,10 @@ package states {
 			addChild(_instrux3); 
 			_instrux3.x = centerX - _instrux3.textWidth * .5; 
 			_instrux3.y = _instrux2.y + _instrux2.textHeight; 
+			
+			addChild(_instrux4);
+			_instrux4.x = centerX - _instrux4.textWidth * .5; 
+			_instrux4.y = _instrux3.y + _instrux4.textHeight; 
 			
 			addChild(_backButton); 
 			_backButton.x =0; 

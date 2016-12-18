@@ -81,7 +81,7 @@ package gameObjects {
 		
 		override public function onCollision(e:Entity):void{
 			//_isAlive = false; 
-			drawCollisionHull(); //debug new 
+			//drawCollisionHull(); //debug new 
 		}
 		
 		override protected function drawCollisionHull():void{
