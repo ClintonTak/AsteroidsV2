@@ -15,7 +15,7 @@ package core {
 		public static const BREAK:uint = Keyboard.S;
 		public static const LEFT:uint = Keyboard.A;
 		public static const RIGHT:uint = Keyboard.D;
-		
+		public static const TELEPORT:uint = Keyboard.Q; 
 		public static const PAUSE:uint = Keyboard.ESCAPE;
 		
 		

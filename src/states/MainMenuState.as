@@ -1,5 +1,6 @@
 package states 
 {
+	import core.SoundManager;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -8,7 +9,7 @@ package states
 	import ui.Label; 
 	import core.Game;
 	import core.State;
-	import SoundManager;
+	import core.SimpleSound;
 	import Assets;
 	public class MainMenuState extends State{
 		private var _fsm:Game;
@@ -17,9 +18,6 @@ package states
 							Assets.getImage("playhover"), Assets.getImage("playhover"), Assets.getImage("play")); 
 		private var _instructionButton:SimpleButton = new SimpleButton(Assets.getImage("instructions"), 
 							Assets.getImage("instructionshover"), Assets.getImage("instructionshover"), Assets.getImage("instructions")); 
-		private var _highScoresButton:SimpleButton = new SimpleButton(Assets.getImage("highscores"), 
-							Assets.getImage("highscoreshover"), Assets.getImage("highscoreshover"), Assets.getImage("highscores")); 
-		private var _startSFX:SoundManager = new SoundManager("./assets/startGame.mp3"); 
 		public function MainMenuState(fsm:Game){
 			super(fsm);
 			_fsm = fsm;
@@ -38,17 +36,10 @@ package states
 			_instructionButton.y = _playButton.y + _playButton.height; 
 			_instructionButton.width = _instructionButton.width ; 
 			_instructionButton.addEventListener(MouseEvent.CLICK, onClickInstruction); 
-			
-			addChild(_highScoresButton); 
-			_highScoresButton.x = Config.getNumber("center_x", "world") - _highScoresButton.width * .5; 
-			_highScoresButton.y = _instructionButton.y + _highScoresButton.height; 
-			_highScoresButton.width = _highScoresButton.width ; 
-			_highScoresButton.addEventListener(MouseEvent.CLICK, onClickHighScores); 
 		}
 		
 		public function onClickPlay(e:MouseEvent):void {
-			_startSFX.playSound(); 
-			//_backgroundSFX.stopSound(); 
+			SoundManager.sharedInstance()._startGame.playSound();
 			_fsm.changeState(Game.PLAY_STATE); 
 		}
 		
@@ -56,13 +47,9 @@ package states
 			_fsm.changeState(Game.INSTRUCTION_STATE); 
 		}
 		
-		public function onClickHighScores(e:MouseEvent):void{
-			_fsm.changeState(Game.HIGHSCORES_STATE); 
-		}
 		
 		override public function update():void{}
 		override public function destroy():void{
-			
 			_fsm = null;
 			_playButton.removeEventListener(MouseEvent.CLICK, onClickPlay);
 			removeChild(_label);
@@ -71,8 +58,7 @@ package states
 			_playButton = null;
 			removeChild(_instructionButton);
 			_instructionButton = null;
-			removeChild(_highScoresButton);
-			_highScoresButton = null; 
+		
 		} 
 	}
 

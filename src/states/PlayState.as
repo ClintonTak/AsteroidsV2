@@ -1,8 +1,8 @@
 package states 
 {
-	import com.adobe.tvsdk.mediacore.events.NotificationEvent;
 	import core.Entity;
 	import core.Game;
+	import core.SoundManager;
 	import core.State; 
 	import core.Config; 
 	import core.Utils;
@@ -28,10 +28,10 @@ package states
 	import flash.display.SimpleButton;
 	import ui.Label;
 	import flash.events.MouseEvent;
-	import SoundManager;
+	import core.SimpleSound;
 	public class PlayState extends State{
 		private var _asteroidCount:Number = 0; 
-		private var _playerScore:Number = 0; 
+		public static var _playerScore:Number = 0; 
 		private var _scoreBoard:Label = new Label("Score: 0", 56, Config.getColor("white", "color") , Config.getSetting("font", "settings") , true); 
 		private var _level:Label = new Label("Level: 0", 48, Config.getColor("white", "color") , Config.getSetting("font", "settings") , true); 
 		private var _currentLevel:Number = 0; 
@@ -47,25 +47,18 @@ package states
 		private var _bullets:Vector.<Entity> = new Vector.<Entity>; 
 		private var _asteroids:Vector.<Entity> = new Vector.<Entity>;
 		private var _gfx:Vector.<Entity> = new Vector.<Entity>;
-		private var _ufos:Vector.<Entity> = new Vector.<Entity>; 
 		
 		private var _ship:Ship = new Ship( Config.getNumber("width", "world") * .5, Config.getNumber("height", "world") * .5); 
 		public var _collisions:Sprite = new Sprite(); 
 									
-		private var _paused:Boolean = false;
-		private var _gamePaused:Label = new Label ("Game is paused.", 84, Config.getColor("white","color"), Config.getSetting("font", "settings"), true);
-		private var _resumeButton:SimpleButton = new SimpleButton(Assets.getImage("resume"), 
-							Assets.getImage("resumehover"), Assets.getImage("resumehover"), Assets.getImage("resume")); 
+		//used to pause the game 
+		private var _paused:Boolean = false; 
+		private var _frameCount:Number = 0;//makes sure the key isn't being reread too soon after pausing/resuming and canceling out the previous action 
+		private var _gamePaused:Label = new Label ("Game is paused. Press escape to resume", 42, Config.getColor("white", "color"), Config.getSetting("font","settings"), true);  
 		
 		private var _ufoAlive:Boolean = false;
 		private var _ufo:UFO = new UFO(0, 0); 
 		
-		
-		private var _fireSFX:SoundManager = new SoundManager("./assets/fire.mp3"); 
-		private var _bangSmall:SoundManager = new SoundManager("./assets/bangSmall.mp3");
-		private var _bangMedium:SoundManager = new SoundManager("./assets/bangMedium.mp3");
-		private var _bangLarge:SoundManager = new SoundManager("./assets/bangLarge.mp3");
-		private var _background:SoundManager = new SoundManager("./assets/backgroundmusic.mp3"); 
 		public function PlayState(fsm:Game){
 			super(fsm);
 			_fsm = fsm; 
@@ -77,8 +70,7 @@ package states
 			healthDisplay();
 			addChild(_scoreBoard); 
 			addChild(_level); 
-			_background.playSound();
-			
+			SoundManager.sharedInstance()._backgroundMusic.playSound();
 		}
 		
 		
@@ -109,7 +101,7 @@ package states
 			var b:Bullet = new Bullet(e._x, e._y, e._direction); 
 			addEntity(new GFXPew(e._x, e._y)); 
 			addEntity(b);
-			_fireSFX.playSound();
+			SoundManager.sharedInstance()._fire.playSound();
 			
 		}
 		
@@ -121,8 +113,6 @@ package states
 				_asteroids.push(e); 
 			}else if (e is GFX){
 				_gfx.push(e); 
-			}else if (e is UFO){
-				_ufos.push(e);
 			}
 			addChild(e); 
 		}
@@ -133,14 +123,14 @@ package states
 			if (e._type == Asteroid.TYPE_BIG){
 				spawnCount = 3; 
 				_asteroidCount = _asteroidCount + 3;
-				_bangLarge.playSound(); 
+				SoundManager.sharedInstance()._bangLarge.playSound();
 			} else if (e._type == Asteroid.TYPE_MEDIUM){
 				spawnCount = 2; 
 				newType = Asteroid.TYPE_SMALL
 				_asteroidCount = _asteroidCount + 2; 
-				_bangMedium.playSound(); 
+				SoundManager.sharedInstance()._bangMedium.playSound();
 			} else {
-				_bangSmall.playSound(); 
+				SoundManager.sharedInstance()._bangSmall.playSound();
 			}
 			while (spawnCount--){
 				addEntity(new Asteroid(e._x, e._y, newType));
@@ -150,6 +140,19 @@ package states
 
 		override public function update():void{
 			var entities:Vector.<Entity> = getAllEntities(true); 
+			
+			//for pausing
+			_frameCount += 1; 
+			if (Key.isDown(Key.PAUSE) && _paused == false && _frameCount > 10){//pauses game
+				pause(); 
+			}
+			if (Key.isDown(Key.PAUSE) && _paused == true && _frameCount > 10){//resumes game
+				resume(); 
+			}
+			if (_paused == true){
+				return; 
+			}
+			
 			for each (var entity:Entity in entities){
 				entity.update(); 
 			}
@@ -182,31 +185,7 @@ package states
 			}
 			if (_asteroidCount < minAstroidNumber){
 				singleAsteroid(); 
-			} 
-			if (Key.isDown(Key.PAUSE)){
-				pause(); 
-			}
-			
-			
-		}
-		
-		public function spawnUFO():void{
-		
-			_ufo = new UFO(0, 0); 
-			addEntity(_ufo); 
-			_ufoAlive = false; 
-		}
-		
-		public function ufoShoot(ufo:UFO):void{
-			var x:Number = ufo.centerX;
-			var y:Number = ufo.centerY; 
-			var dx:Number = x - _ship.centerX;
-			var dy:Number = y - _ship.centerY;
-			var radians:Number = Math.atan2(dy, dx); 
-			var dr:Number = ufo.rotation - (radians * Config.TO_DEG);
-			
-			var b:Bullet = new Bullet(x, y, dr)
-			addEntity(b); 
+			} 			
 		}
 		
 	
@@ -280,37 +259,25 @@ package states
 				if (!_ship._isAlive){
 					_ship.destroy();
 					removeChild(_ship);
-					//signal game over
 				}
 			}
 		}
 		
 		private function pause():void{
-			mouseEnabled = true;
-			mouseChildren = true; 
-			addChild(_gamePaused); 
-			addChild(_gamePaused);
-			
 			_gamePaused.x = Config.getNumber("center_x", "world") - _gamePaused.textWidth * .5; 
 			_gamePaused.y = Config.getNumber("center_y", "world") - _gamePaused.textHeight; 
+			addChild(_gamePaused); 
+			_paused = true;
+			SoundManager.sharedInstance().pauseAll();
 			
-			
-			addChild(_resumeButton); 
-			_resumeButton.x = Config.getNumber("center_x", "world") -_resumeButton.width * .5;
-			_resumeButton.y = _gamePaused.y + _resumeButton.height; 
-			_resumeButton.y =0; 
-			_resumeButton.addEventListener(MouseEvent.CLICK, resume); 
-			
-			stage.frameRate = 0; 
+			_frameCount = 0;
 		}
-		private function resume(e:MouseEvent):void{
-			stage.frameRate = 30; 
-			
-			removeChild(_resumeButton); 
-			removeChild(_gamePaused); 
-			mouseEnabled = false;
-			mouseChildren = false; 
-			
+		
+		private function resume():void{
+			_paused = false;
+			SoundManager.sharedInstance().resumeAll();
+			removeChild(_gamePaused);
+			_frameCount = 0;
 		}
 		
 		override public function destroy():void{
@@ -321,12 +288,10 @@ package states
 			removeAllDeadEntities();
 			_ship = null; 
 			super.destroy(); 
-			_background.stopSound();
-			_fireSFX = null; 
-			_bangSmall = null; 
-			_bangMedium = null; 
-			_bangLarge = null; 
-			_background = null; 
+			SoundManager.sharedInstance().stopAll();
+			_healthShip1 = null;
+			_healthShip2 = null;
+			_healthShip3 = null;
 		}
 
  
