@@ -17,7 +17,6 @@ package states {
 	
 	public class GameOverState extends State{
 		private var _fsm:Game;
-		
 		private var _instrux0:Label = new Label("Game Over.", 48, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
 		private var _highScore:Label = new Label("Test", 40, Config.getColor("white", "color"), Config.getSetting("font", "settings"), true);
 		private var _backButton:SimpleButton = new SimpleButton(Assets.getImage("back"), 

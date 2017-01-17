@@ -7,7 +7,6 @@ package core  {
 	import flash.media.SoundMixer;
 	
 	public class SoundManager {
-		
 		private static var _instance:SoundManager = null;
 		
 		public var _backgroundMusic:core.SimpleSound; 

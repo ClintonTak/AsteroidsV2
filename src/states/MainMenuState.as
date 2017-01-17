@@ -1,5 +1,5 @@
-package states 
-{
+package states{
+	
 	import core.SoundManager;
 	import flash.display.SimpleButton;
 	import flash.display.Sprite;

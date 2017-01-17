@@ -224,7 +224,14 @@ package states
 					_ship.onCollision(a);
 					a.onCollision(_ship);
 					addEntity(new GFXOuch(_ship.centerX, _ship.centerY)); 
-					_lives--; 
+					if (_ship._shieldActive == true){
+						_ship._shieldEnergy -= 1; 
+						if (_ship._shieldEnergy == 0){
+							_ship.deactivateShield(); 
+						}
+					}else {
+						_lives--; 
+					}
 					if (_lives == 2){
 						removeChild(_healthShip3);
 					}

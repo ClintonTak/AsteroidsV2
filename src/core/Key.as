@@ -17,6 +17,7 @@ package core {
 		public static const RIGHT:uint = Keyboard.D;
 		public static const TELEPORT:uint = Keyboard.Q; 
 		public static const PAUSE:uint = Keyboard.ESCAPE;
+		public static const SHIELD:uint = Keyboard.E;
 		
 		
 		public function Key(){} //never call this because we will never create an instance of this class

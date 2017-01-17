@@ -1,4 +1,5 @@
 package gameObjects {
+	import com.adobe.tvsdk.mediacore.info.ClosedCaptionsTrack;
 	import core.Entity;
 	import core.Config;
 	import core.Key;
@@ -17,9 +18,18 @@ package gameObjects {
 		private var _rearLeft:Point = new Point(0,  Config.getNumber("height", "ship")); 
 		private var _engineHole:Point = new Point(Config.getNumber("width", "ship")*.125, Config.getNumber("height", "ship") * .5); 
 		private var _nextShot:Number = getTimer() + Config.getNumber("time_between_shots", "ship"); 
-		
 		private var _playerLives:Number = 3; 
-		//private var _isAlive = true; 
+		
+		//teleportation 
+		private var _nextTeleport:Number = getTimer() + 100; 
+		private var _teleportCount:Number = 3;
+		
+		//shield
+		private var _nextShield:Number = getTimer() + 100; 
+		public var _shieldActive:Boolean = false; 
+		private var _shieldCount:Number = 1; 
+		public var _shieldEnergy:Number = 4; 
+		
 		
 		public function Ship(x:Number = 0, y:Number = 0) {
 			super(x, y);
@@ -60,6 +70,28 @@ package gameObjects {
 			}else {
 				_thrust = 0; 
 			}
+			if (Key.isDown(Key.TELEPORT)&& _teleportCount != 0 && getTimer() > _nextTeleport){
+				teleport();
+			}
+			if (Key.isDown(Key.SHIELD) && _shieldCount != 0 && getTimer() > _nextShield){
+				shield();
+			}
+		}
+		
+		private function shield():void{
+			_color = 0x123456; 
+			_shieldActive = true;
+		}
+		public function deactivateShield():void{
+			_color = 0xFFFFFF;
+			_shieldActive = false;
+		}
+		
+		private function teleport():void{
+			x = Utils.random(0, Config.getNumber("width", "world"));
+			y = Utils.random(0, Config.getNumber("height", "world"));
+			_teleportCount -= 1;
+			_nextTeleport = getTimer() + 100;
 		}
 		
 		override public function isColliding(that:Entity):Boolean{
