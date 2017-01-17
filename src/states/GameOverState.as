@@ -41,8 +41,7 @@ package states {
 			var centerY:Number = Config.getNumber("center_y", "world");
 			super(fsm);
 			_fsm = fsm; 
-			
-			
+
 			addChild(_backButton); 
 			_backButton.x =0; 
 			_backButton.y = 0; 
@@ -59,9 +58,7 @@ package states {
 			_highScore.x = centerX - _highScore.textWidth * .5; 
 			_highScore.y = _instrux0.y + _highScore.textHeight;
 			_shared = SharedObject.getLocal("highScores"); 
-			
-			
-			
+
 			_savedSN = _shared.data.nameScore; 
 			if (_savedSN == null){
 				trace("New game save created"); 
@@ -75,14 +72,10 @@ package states {
 					captureText(); 
 				}
 			}
-			
 			displayScores();
-			
-			
-		
 		}
+		
 		private function displayScores():void{
-			
 			addChild(_highScoreHeader);
 			_highScoreHeader.x = Config.getNumber("center_x", "world") - _highScoreHeader.textWidth * .5;
 			_highScoreHeader.y = Config.getNumber("center_y", "world") + _highScoreHeader.textHeight + 50;
@@ -104,7 +97,6 @@ package states {
 		}
 		
 		public function captureText():void{
-			
 			addChild(_newHighScore); 
 			_newHighScore.x = Config.getNumber("center_x", "world") - _newHighScore.textWidth * .5; 
 			_newHighScore.y = _highScore.y + _newHighScore.textHeight + 20;
@@ -118,18 +110,12 @@ package states {
 			_textBox.height = 30; 
 			addChild(_textBox); 
 			_textBox.addEventListener(KeyboardEvent.KEY_DOWN, textInputCapture); 
-		
-			
 		}
 		
 		public function textInputCapture(event:KeyboardEvent):void{
 			var playerScore:Number = PlayState._playerScore; 
 			if (event.charCode == 13){
-				trace(_shared.data.playerName +" and " + playerScore); 
-			
-				
 				if (playerScore > _savedSN.score1 || _savedSN.score1 == "0"){
-					trace("Score1"); 
 					_savedSN = {
 						name1: _textBox.text, name2: _savedSN.name1, name3:_savedSN.name2,
 					score1:playerScore, score:_savedSN.score1, score3:_savedSN.score2};
@@ -152,13 +138,10 @@ package states {
 					_fsm.changeState(Game.MENU_STATE);
 				}
 			}
-			
         } 
              
-        public function createOutputBox(str:String):void 
-        { 
+        public function createOutputBox(str:String):void{ 
             _outputBox.background = true; 
-			
             _outputBox.x = 200; 
             addChild(_outputBox); 
             _outputBox.text = str; 
@@ -177,9 +160,7 @@ package states {
 			removeChild(_highScore);
 			_highScore = null; 
 			_backButton = null; 
-			//removeChild(_newHighScore);
 			_newHighScore = null; 
-			//removeChild(_textBox); 
 			_textBox = null; 
 			_outputBox = null; 
 			_infoText = null;
@@ -193,9 +174,6 @@ package states {
 			_highScore2 = null; 
 			removeChild(_highScore3);
 			_highScore3 = null; 
-		
-			
 		} 
 	}
-
 }
